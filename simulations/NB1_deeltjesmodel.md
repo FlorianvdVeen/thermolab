@@ -289,6 +289,13 @@ for i, particle in enumerate(particle_array):
         '-',
         color=particle.C
     )
+
+plt.xlabel("X position")
+plt.ylabel("Y position")
+plt.title("Particle positions before and after 2")
+plt.legend()
+plt.grid()
+plt.axis('equal')
 plt.show()
 ```
 
