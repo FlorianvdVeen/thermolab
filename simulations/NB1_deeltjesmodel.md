@@ -65,6 +65,7 @@ plt.ylabel('$x$(m)')
 
 plt.plot(t,x_1,'r.', markersize=1, label='fietser 1')
 plt.plot(t,x_2,'b.', markersize=1, label='fietser 2')
+plt.legend()
 
 plt.show()
 
@@ -97,7 +98,7 @@ Een *class* is een blauwdruk voor het creëren van objecten (zoals deeltjes, ato
 # Merk op dat de class zelf geen deeltje is! 
 # Een object dat tot een bepaalde class behoort, wordt een instant van die class genoemd. 
 # Je kunt meerdere instants van een class hebben.
-
+import numpy as np
 class ParticleClass:
     def __init__(self, m, v, r, R):
         self.m = m                         # massa van het deeltje
@@ -230,6 +231,65 @@ En als je wilt gaan voor een uitdaging:
 
 ```python
 ### YOUR CODE HERE ###
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+colors = np.array(("r","g","b",))
+particle_array = []
+colors = np.array([ "red","blue","green","orange","purple","gold","cyan","magenta","lime","brown","deeppink","navy","olive","turquoise","coral","blueviolet"
+])
+aantal_deeltjes = 10
+
+class ParticleClass:
+    def __init__(self, m, v, r, R, C):
+        self.m = m                         # massa van het deeltje
+        self.C = C                         #kleur van het deeltje
+        self.v = np.array(v, dtype=float)  # snelheids vector
+        self.r = np.array(r, dtype=float)  # positie vector
+        self.R = np.array(R, dtype=float)  # radius van het deeltje
+
+    def update_position(self,dt):
+        """Werk de positie van het deeltje bij op basis van zijn snelheid en tijdstap dt."""
+        self.r += self.v * dt
+
+
+for I in range(aantal_deeltjes):
+    particle_array.append(ParticleClass(m = 1, v=[random.randint(-5,5), random.randint(-2,2)], r=[random.randint(-10,10), 0.0],R=1.0, C=colors[random.randint(0,15)])) 
+
+
+initial_positions = [particle.r.copy() for particle in particle_array]
+
+for particle in particle_array:
+    particle.update_position(2.0)
+    print(str(particle.v))
+    
+plt.figure()
+
+for i, particle in enumerate(particle_array):
+    plt.plot(
+        initial_positions[i][0],
+        initial_positions[i][1],
+        'o',
+        color=particle.C,
+        label='Initial position' if i == 0 else ""
+    )
+
+    plt.plot(
+        particle.r[0],
+        particle.r[1],
+        'x',
+        color=particle.C,
+        label='Position after 2' if i == 0 else ""
+    )
+
+    plt.plot(
+        [initial_positions[i][0], particle.r[0]],
+        [initial_positions[i][1], particle.r[1]],
+        '-',
+        color=particle.C
+    )
+plt.show()
 ```
 
 Onze simulaties worden snel “zwaar”. Er moeten veel berekeningen gedaan worden en dat kost nu eenmaal tijd. Nu is het wel zo dat sommige berekeningen meer tijd kosten dan anderen. Om te kijken of een stukje code geoptimaliseerd kan worden, moeten we een timer maken. Dat kan met onderstaande code:
