@@ -1,5 +1,6 @@
 # NB 2: Brownian motion
 
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
