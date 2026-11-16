@@ -31,7 +31,10 @@ Alhoewel het interessant is om steeds een animatie te maken van de beweging van 
 ```
 
 
-### De initiële condities
+### 
+
+
+De initiële condities
 
 In onze simulatie gaan we uit van een aantal aannames. Bij deze aannames wil je dat de simulatie een voorspellende waarde heeft voor een reëel systeem, maar ook dat de benodigde rekenkracht voor het uitvoeren van de simulatie op te brengen is. We kiezen daarom voor de volgende condities:
 
@@ -50,6 +53,18 @@ Als model gaan we uit van een deel van het volume van een fietsband die onder ee
 
 ```{solution} ex-recap-1
 ### YOUR CODE HERE ###
+k_B = 1.380649e-23   # J/K
+
+T = 293              # K
+
+p = 10e5             # Pa (10 bar)
+
+
+V_molecuul = k_B * T / p          # m^3
+
+ribben = V_molecuul ** (1/3)       # m
+
+print(ribben * 1e9, "nm")          # ≈ 1.6 nm
 ```
 
 De simulatie die we gaan maken bevat maar twee dimensies. We kunnen het oppervlak per deeltje in deze simulatie daarom kiezen als het zojuist berekende $V_\text{molecuul}^{2/3}$.
@@ -70,6 +85,22 @@ Ook deze heb je hierna nodig.
 
 ```{solution} ex-recap-2
 ### YOUR CODE HERE ###
+import numpy as np
+
+k_B = 1.380649e-23   # J/K 
+
+T = 293              # K 
+
+u = 1.66054e-27      # kg 
+
+m = 28 * u           # kg (N2) 
+
+
+v = np.sqrt(2 * k_B * T / m)   # m/s 
+
+print(v)                       # ≈ 4.2e2 m/s 
+
+
 ```
 
 ```{exercise} Radius
@@ -87,6 +118,28 @@ Bekijk de waarde van `DT`. Hoe zorgt deze waaarde ervoor dat het onwaarschijnlij
 ```
 
 Onze simulatie modelleert dus een klein systeem zonder rekening te houden met de kracht tussen de luchtmoleculen. Je zult zien dat we toch al behoorlijk wat van de processor vragen om deze berekeningen te doen. Om een meer realistische modelsimulatie te maken is daarom een serieuze uitdaging, die veel wiskunde en programmeerervaring vraagt. Op dit ogenblik wordt dit bijvoorbeeld gevraagd bij een van de eerste opdrachten van het vak 'Computational Physics' van de master Applied Physics. 
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+k_B = 1.380649e-23 # J/K
+T = 293 # K
+p = 10e5 # Pa (10 bar)
+V_molecuul = k_B * T / p # m^3
+ribben = V_molecuul ** (1/3) # m
+
+print(ribben * 1e9, 'nm') # ≈ 1.6 nm
+```
+
+```python
+k_B = 1.380649e-23 # J/K
+T = 293 # K
+u = 1.66054e-27 # kg
+m = 28 * u # kg (N2)
+v = np.sqrt(2 * k_B * T / m) # m/s
+
+print(v) # ≈ 4.2e2 m/s
+```
 
 ```python tags=["NB2_init"] editable=true slideshow={"slide_type": ""}
 BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
@@ -319,11 +372,19 @@ energy_tot = []
 create_particles(particles)
 for i in range(100):
     take_time_step(particles)
-    # voeg de som van de kinetische energie in deze stap toe aan energy_tot 
-    ### YOUR CODE HERE ###
+    # voeg de som van de kinetische energie in deze stap toe aan energy_tot
+    energy_tot.append(sum(0.5 * p.m * np.linalg.norm(p.v)**2 for p in particles))
 
-# plot de figuur van de kinetische energie als functie van de tijd. 
-### YOUR CODE HERE ###
+# plot de figuur van de kinetische energie als functie van de tijd.
+
+
+
+plt.plot(energy_tot)
+plt.xlabel("Tijdstap")
+plt.ylabel("Totale kinetische energie")
+plt.ylim(19.99999999999999,20.00000000000001)
+plt.show()
+print(energy_tot)
 ```
 
 ```{exercise} 
@@ -334,6 +395,9 @@ Als je heel nauwkeurig naar de waarde voor de totale kinetische energie kijkt, d
 ```{solution} ex-recap-8
 Jouw antwoord hier...
 ### YOUR CODE HERE ###
+op deze schaal is er variatie te zien plt.ylim(19.99999999999999,20.00000000000001), dit komt waarschijnlijk door bereken limitaties van python, of doordat float maar tot een bepaald aantal significanten cijfers werkt
+
+
 ```
 
 
