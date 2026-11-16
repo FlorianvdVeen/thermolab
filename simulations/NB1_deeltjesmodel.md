@@ -244,7 +244,7 @@ aantal_deeltjes = 10
 class ParticleClass:
     def __init__(self, m, v, r, R, C):
         self.m = m                         # massa van het deeltje
-        self.C = C                         #kleur van het deeltje
+        self.C = C                         # kleur van het deeltje
         self.v = np.array(v, dtype=float)  # snelheids vector
         self.r = np.array(r, dtype=float)  # positie vector
         self.R = np.array(R, dtype=float)  # radius van het deeltje
@@ -310,13 +310,13 @@ start = time.time()
 array = np.array([])
 N = int(1e5)
 
-for i in range(N):
-    array = np.append(array,np.random.rand(1))
+array = np.random.rand(N)
 
 eind = time.time()
 lengte = eind - start
 
 print("Dit kostte ", lengte, "seconde!")
+print(array)
 ```
 
 Idealiter draaien we de bovenstaande code een aantal keer zodat we een goede schatting hebben van de rekentijd.
@@ -339,7 +339,7 @@ De runtime is {eval}`<naam variabele>` korter.
 ```
 
 ```python
-
+print(f"De runtime is {lengte:.2f} korter.")
 ```
 
 ## Aan de slag met deeltjes
@@ -498,9 +498,12 @@ Controleer je eigen antwoord door de functie hierboven even te vervangen door de
 # doorlopende doos
 def update(frame):
     particle.update_position()
-    dot.set_data([particle.r[0]], [particle.r[1]])
 ### YOUR CODE HERE ###
-    return dot,         
+    if abs(particle.r[0]) >= 10:
+        particle.r[0] *= -1
+        
+    dot.set_data([particle.r[0]], [particle.r[1]])
+    return dot,          
 ```
 
 ```{exercise} Harde wanden
@@ -514,8 +517,13 @@ Test wederom je code door de vernieuwde functie hierboven te plakken.
 # harde wanden
 def update(frame):
     particle.update_position()
-    dot.set_data([particle.r[0]], [particle.r[1]])
-### YOUR CODE HERE ###
+
+    ### YOUR CODE HERE ###
+    if abs(particle.r[0]) >= 10:
+        particle.r[0] = np.clip(particle.r[0], -10, 10)
+        particle.v[0] *= -1
+
+    dot.set_data([particle.r[0]], [particle.r[1]])    
     return dot,
 ```
 
@@ -531,6 +539,8 @@ dt = 0.1         # time step
 num_steps = 500  # number of time steps
 
 ### YOUR CODE HERE ###
+
+particle = ParticleClass(m=1.0, v=[5.0, 3.0], r=[0.0, 0.0],R=1.0)  
 
 # Create the figure and axis
 fig, ax = plt.subplots()
@@ -554,10 +564,13 @@ def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
     ### YOUR CODE HERE ###
+    hit = np.abs(particle.r) >= 10 - (particle.R/2)
+    particle.v[hit] *= -1
+    particle.r = np.clip(particle.r, -10, 10)
     return dot,
 
 # Create animation
-ani = FuncAnimation(fig, update, frames=range(200), init_func=init, blit=True, interval=50)
+ani = FuncAnimation(fig, update, frames=range(200), init_func=init, blit=True, interval= 50)
 
 # For Jupyter notebook:
 from IPython.display import HTML
@@ -595,12 +608,34 @@ class ParticleClass:
 
 
 ```python
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
+# Maken van de class met versnelling
+class ParticleClass:
+    def __init__(self, m, v, r, R):
+        self.m = m                         # mass of the particle
+        self.v = np.array(v, dtype=float)  # velocity vector
+        self.r = np.array(r, dtype=float)  # position vector
+        self.R = R                         # radius of the particle
+
+    def update_position(self):
+        self.r += self.v * dt
+    
+    def update_velocity(self, a):
+        self.v += a*dt
+        
 # Simulation parameters
 dt = 0.1         # time step
 num_steps = 500  # number of time steps
 particle = ParticleClass(m=1.0, v=[5.0, 0], r=[0.0, 0.0],R=1.0)  
+
+
 ### YOUR CODE HERE ###
+a = np.array((0 , -9.81))
+
+
 # Create the figure and axis
 fig, ax = plt.subplots()
 ax.set_xlim(-10, 10)
