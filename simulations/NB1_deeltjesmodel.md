@@ -933,8 +933,16 @@ def update(frame):
         if p.r[1]**2>100: 
             p.v[1] = -p.v[1]
 
-        
+        for other_i, other_p in enumerate(particles):
+            if i == other_i:
+                continue
 
+            if p.collide_detection(other_p):
+                print(f"Collision detected between particle {i} and particle {other_i}")
+                new_v = (p.m - other_p.m) / (p.m + other_p.m) * p.v + (2 * other_p.m) / (p.m + other_p.m) * other_p.v
+                other_new_v = (other_p.m - p.m) / (p.m + other_p.m) * other_p.v + (2 * p.m) / (p.m + other_p.m) * p.v
+                p.v = new_v
+                other_p.v = other_new_v
     return *dots, *track_line
 
 # Creeer animatie
